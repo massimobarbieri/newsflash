@@ -107,28 +107,10 @@ $wgContentNamespaces[] = NS_NEWS;
       if ($dbr->numRows($res) <= 0) {
         return "";
       }
-	# DISABILITATO DA MAX
-      #$output .= "<table cellspacing='0'>\n";
 	$output .= "<ul>";
       while ( $row = $dbr->fetchObject( $res ) ) {
-
-        $contentDivId = "news" . $row->page_id;
-# Aggiunto da Max
-
-        $output .= "<li><a href=\"/index.php/" . Title::makeTitle( $row->page_namespace, $row->page_title) . "\">" . $this->formatDate($row->articleDate) . ": " . Title::makeTitle( 0, $row->page_title) . "</a></li>";
-#DISABILITATO DA MAX
-/*
-        $output .= "<tr>\n";
-        $output .= "<td>";
-        $output .= "<a href=\"javascript:showHideDiv('$contentDivId');\">" . $this->formatDate($row->articleDate) . ": " . Title::makeTitle( 0, $row->page_title) . "</a>";
-        $output .= "<div id=\"$contentDivId\" style=\"display: none;\">";
-        $content = str_replace("[[Category:" . $this->argumentArray["category"] . "]]", "", $row->old_text);
-        $output .= "<a href=\"/index.php/" . Title::makeTitle( $row->page_namespace, $row->page_title) . "\"><img src=\"/extensions/News/document.png\" alt=\"doc\"/> Vai all'articolo originale</a>\n";
-        $output .= $parser->recursiveTagParse($content);
-        $output .= "</div>";
-        $output .= "</td>";
-        $output .= "</tr>\n";
-*/
+		$contentDivId = "news" . $row->page_id;
+		$output .= "<li><a href=\"/index.php/" . Title::makeTitle( $row->page_namespace, $row->page_title) . "\">" . $this->formatDate($row->articleDate) . ": " . Title::makeTitle( 0, $row->page_title) . "</a></li>";
       }
 	$output .= "</ul>";
       $dbr->freeResult($res);
@@ -137,6 +119,7 @@ $wgContentNamespaces[] = NS_NEWS;
                 JOIN $categorylinks ON page_id = cl_from WHERE cl_to =" . $dbr->addQuotes($this->argumentArray["category"]), 'newsCount' );
       $row = $dbr->fetchObject( $res );
 
+#TODO: Controllare questa parte
       if ($row->pageCount > $this->argumentArray["rows"]) {
         if ($this->argumentArray["showPages"] == true) {
           $pages = "";
@@ -148,10 +131,8 @@ $wgContentNamespaces[] = NS_NEWS;
             $pages .= "<a href=\"?page=" . ($i + 1) . "\">" . ($i + 1) . "</a>";
           }
 
-          #$output .= "<tr><td style=\"border-top: thin solid #000000;\">Seite $pages</td></tr>";
         }
       }
-      #$output .= "</table>" . $divs;
       return $output;
     }
   }
