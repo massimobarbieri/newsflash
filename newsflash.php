@@ -1,5 +1,6 @@
 <?php
 # Copyright (C) 2009 Erich Steiger <me@erichsteiger.com>
+# Copyright (C) 2011 Massimo Barbieri <massimo@fsfe.org> 
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -169,12 +170,12 @@ $wgContentNamespaces[] = NS_NEWS;
  * Add extension information to Special:Version
  */
 $wgExtensionCredits['other'][] = array(
-	'name'        => 'News parser extension',
-	'version'     => '0.2 (beta)',
-	'author'      => 'Erich Steiger',
+	'name'        => 'Newsflash extension',
+	'version'     => '0.0.1',
+	'author'      => 'Erich Steiger changed by Massimo Barbieri',
 	'description' => 'Allows users to create News-Pages and News-Lists limited to n elements. News are articles of a specific category. Default is Category News, but can be overruled by attribute category',
 	'descriptionmsg' => 'news-desc',
-	'url'         => 'http://www.erichsteiger.com',
+	'url'         => 'http://lug.42019.it',
 );
 
 ?>
