@@ -1,0 +1,17 @@
+Newsflash is an extension for Mediawiki that allows to show the latest articles 
+of a specific category, default is News. The code of this extension is taken 
+from News2[1] by Erich and changed accordingly to the GPL license.
+
+== Installing ==
+* Download Newsflash_0.0.1.tar.gz and unpack it in your mediawiki extensions subfolder
+* Then add the following line to your LocalSettings.php file (near the end):
+
+ require_once( "$IP/extensions/Newsflash/Newsflash.php" );
+
+== Usage ==
+<news>
+    this includes a list of elements from the category "News". The last added entry comes first
+<news rows="5">
+    limits the list to 5 elements. This means the last 5 News entries will be shown
+<news category="FooBar">
+    shows elements from Category "FooBar". Default is "News"
