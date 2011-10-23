@@ -29,70 +29,73 @@ $wgContentNamespaces[] = NS_NEWS;
   $wgExtensionFunctions[] = "efNews";
   $wgHooks['OutputPageParserOutput'][] = 'newsParserOutput';
 
-  function efNews() {
-    global $wgParser;
+function efNews() {
+	global $wgParser;
+	$wgParser->setHook( 'news', 'initNews' );
+}
 
-    $wgParser->setHook( 'news', 'initNews' );
-  }
+function initNews( $input, $args, $parser) {
+	$newsParser = new News($input, $args, $parser);
+	return $newsParser->parse();
+}
 
-  function initNews( $input, $args, $parser) {
-    $newsParser = new News($input, $args, $parser);
-    return $newsParser->parse();
-  }
+class News
+{
+	var $argumentArray;
+	var $parser;
 
-  class News {
-    var $argumentArray;
-    var $parser;
+	function News($input, $args, $parser) {
+		$this->parser = $parser;
+		$this->args = $args;
+		$this->parseArguments();
+	}
 
-    function News($input, $args, $parser) {
-      $this->parser = $parser;
-      $this->args = $args;
-      $this->parseArguments();
-    }
+	function parse() {
+		#$output = "<h2>" . $this->argumentArray["title"] . "</h2>";
+		$output .= $this->getNews($this->parser);
+		return $output;
+	}
 
-    function parse() {
-      #$output = "<h2>" . $this->argumentArray["title"] . "</h2>";
-      $output .= $this->getNews($this->parser);
-      return $output;
-    }
 
-    function parseArguments() {
-      if ( isset( $this->args["title"] )) {
-        $this->argumentArray["title"] = $this->args["title"];
-      } else {
-        $this->argumentArray["title"] = "News";
-      }
-      if ( isset( $this->args["category"] )) {
-        $this->argumentArray["category"] = $this->args["category"];
-      } else {
-        $this->argumentArray["category"] = "News";
-      }
+	function parseArguments() {
+		if ( isset( $this->args["title"] )) {
+			$this->argumentArray["title"] = $this->args["title"];
+		} else {
+			$this->argumentArray["title"] = "News";
+		}
+		if ( isset( $this->args["category"] )) {
+			$this->argumentArray["category"] = $this->args["category"];
+		} else {
+			$this->argumentArray["category"] = "News";
+		}
 
-      if ( isset( $this->args["rows"] ) && is_numeric( $this->args["rows"] ) ) {
-        $this->argumentArray["rows"] = $this->args["rows"];
-        $this->argumentArray["showPages"] = false;
-      } else {
-        $this->argumentArray["rows"] = "15";
-        $this->argumentArray["showPages"] = true;
-      }
-      $this->argumentArray["page"] = $_GET["page"];
-      if ($this->argumentArray["page"] == "") {
-        $this->argumentArray["page"] = 1;
-      }
-    }
+		if ( isset( $this->args["rows"] ) && is_numeric( $this->args["rows"] ) ) {
+			$this->argumentArray["rows"] = $this->args["rows"];
+			$this->argumentArray["showPages"] = false;
+		} else {
+			$this->argumentArray["rows"] = "15";
+			$this->argumentArray["showPages"] = true;
+		}
+		
+		$this->argumentArray["page"] = $_GET["page"];
+		if ($this->argumentArray["page"] == "") {
+			$this->argumentArray["page"] = 1;
+		}
+    	}
 
-    function formatDate($date) {
-      $y = substr($date,0,4);
-      $m = substr($date,5,2);
-      $d = substr($date,8,2);
-      return $d . "." .  $m . "." . $y;
-    }
+	function formatDate($date) {
+		$y = substr($date,0,4);
+		$m = substr($date,5,2);
+		$d = substr($date,8,2);
+		return $d . "." .  $m . "." . $y;
+	}
 
-    function getNews($parser) {
-      $dbr = wfGetDB( DB_SLAVE );
+    
+	function getNews($parser) {
+		$dbr = wfGetDB( DB_SLAVE );
 
-      list( $page, $categorylinks, $revision, $text) = $dbr->tableNamesN( 'page', 'categorylinks', 'revision', 'text');
-      $sql = "select * from (
+      		list( $page, $categorylinks, $revision, $text) = $dbr->tableNamesN( 'page', 'categorylinks', 'revision', 'text');
+      		$sql = "select * from (
                      SELECT page_id, page_namespace, page_title, 
                      (select old_text FROM $text JOIN $revision ON rev_text_id = old_id WHERE rev_id = (select max(rev_id) from $revision WHERE rev_page = page_id)) as old_text,
                      (select rev_timestamp FROM $revision WHERE rev_id = (select min(rev_id) from $revision WHERE rev_page = page_id)) as rev_timestamp,
