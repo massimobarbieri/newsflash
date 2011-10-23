@@ -106,21 +106,21 @@ class News
                ORDER BY REV_timestamp desc
                LIMIT " .  $this->argumentArray["rows"] * ($this->argumentArray["page"]-1) . "," . $this->argumentArray["rows"];
 
-      $res = $dbr->query( $sql, 'news' );
-      if ($dbr->numRows($res) <= 0) {
-        return "";
-      }
-	$output .= "<ul>";
-      while ( $row = $dbr->fetchObject( $res ) ) {
-		$contentDivId = "news" . $row->page_id;
-		$output .= "<li><a href=\"/index.php/" . Title::makeTitle( $row->page_namespace, $row->page_title) . "\">" . $this->formatDate($row->articleDate) . ": " . Title::makeTitle( 0, $row->page_title) . "</a></li>";
-      }
-	$output .= "</ul>";
-      $dbr->freeResult($res);
+		$res = $dbr->query( $sql, 'news' );
+		if ($dbr->numRows($res) <= 0) {
+			return "";
+		}
+		$output .= "<ul>";
+		while ( $row = $dbr->fetchObject( $res ) ) {
+			$contentDivId = "news" . $row->page_id;
+			$output .= "<li><a href=\"/index.php/" . Title::makeTitle( $row->page_namespace, $row->page_title) . "\">" . $this->formatDate($row->articleDate) . ": " . Title::makeTitle( 0, $row->page_title) . "</a></li>";
+      		}
+		$output .= "</ul>";
+      		$dbr->freeResult($res);
 
-      $res = $dbr->query( "SELECT count(*) as pageCount FROM $page 
+      		$res = $dbr->query( "SELECT count(*) as pageCount FROM $page 
                 JOIN $categorylinks ON page_id = cl_from WHERE cl_to =" . $dbr->addQuotes($this->argumentArray["category"]), 'newsCount' );
-      $row = $dbr->fetchObject( $res );
+    		  $row = $dbr->fetchObject( $res );
 
 #TODO: Controllare questa parte
       if ($row->pageCount > $this->argumentArray["rows"]) {
